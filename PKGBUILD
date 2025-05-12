@@ -6,27 +6,25 @@ pkgdesc="A GUI application to manage systemd services"
 arch=('x86_64')
 url="https://github.com/TiagoRibeiro25/systemd-services-manager"
 license=('GPL3')
-depends=('python-gobject' 'gtk3' 'python')
-makedepends=('git')
-source=()
-sha256sums=()
+depends=()  # No runtime dependencies needed if using PyInstaller
+makedepends=('pyinstaller' 'python' 'git')  # PyInstaller from the AUR
+source=("git+https://github.com/TiagoRibeiro25/systemd-services-manager.git")
+sha256sums=('SKIP')  # Skip hashing for git source
+
+build() {
+    cd "$srcdir/$pkgname"
+    pyinstaller --onefile ./src/app.py --name systemd-services-manager
+}
 
 package() {
-    # Ensure we are in the right directory
-    cd "$srcdir/$pkgname/src"  # Go to the src directory of your local repository
+    # Install the binary to /usr/bin
+    install -Dm755 "$srcdir/$pkgname/dist/systemd-services-manager" "$pkgdir/usr/bin/systemd-services-manager"
 
-    # Create the directory where the app will be installed
-    mkdir -p "$pkgdir/usr/local/bin/systemd-services-manager"
-
-    # Install the Python files from the src directory into the package
-    cp -r * "$pkgdir/usr/local/bin/systemd-services-manager/"
-
-    # Create a desktop entry for the application
-    mkdir -p "$pkgdir/usr/share/applications"
-    cat > "$pkgdir/usr/share/applications/systemd-services-manager.desktop" <<EOF
+    # Create desktop entry
+    install -Dm644 /dev/stdin "$pkgdir/usr/share/applications/systemd-services-manager.desktop" <<EOF
 [Desktop Entry]
 Name=Systemd Services Manager
-Exec=python3 /usr/local/bin/systemd-services-manager/app.py
+Exec=systemd-services-manager
 Icon=systemd-services-manager
 Type=Application
 Categories=Utility;

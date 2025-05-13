@@ -1,6 +1,6 @@
 # Maintainer: Tiago Ribeiro <tiago.d.ribeiro@hotmail.com>
 pkgname=systemd-services-manager
-pkgver=1.0.0
+pkgver=1.0.1
 pkgrel=1
 pkgdesc="A GUI application to manage systemd services"
 arch=('x86_64')

@@ -1,13 +1,21 @@
 import gi
-from gi.repository import Gtk
+from gi.repository import Gtk, GLib
 from service_manager import get_services, manage_service
 
 gi.require_version("Gtk", "3.0")
 
-def on_action_clicked(button, listbox, action, filter_type):
-    selected = listbox.get_selected_row()
-    if selected:
-        service = selected.service_name
+def on_action_clicked(button, service_lists, action):
+    selected_row = None
+
+    # Find the selected row in any of the service lists
+    for listbox in service_lists.values():
+        row = listbox.get_selected_row()
+        if row:
+            selected_row = row
+            break
+
+    if selected_row:
+        service = selected_row.service_name
         parent = button.get_parent()
         status_label = parent.get_children()[0]
         status_message = manage_service(action, service)
@@ -15,8 +23,14 @@ def on_action_clicked(button, listbox, action, filter_type):
         if isinstance(status_label, Gtk.Label):
             status_label.set_text(status_message)
 
-        populate_services(listbox, filter_type)
+        # Refresh all lists after a small delay to let systemd settle
+        GLib.timeout_add(500, lambda: refresh_all_service_lists(service_lists))
 
+
+def refresh_all_service_lists(service_lists):
+    for filter_type, listbox in service_lists.items():
+        populate_services(listbox, filter_type)
+    return False  # Ensures the timeout only runs once
 
 def populate_services(listbox, filter_type):
     listbox.foreach(lambda widget: listbox.remove(widget))
@@ -36,13 +50,14 @@ def populate_services(listbox, filter_type):
         row.add(row_box)
         listbox.add(row)
     listbox.show_all()
+    listbox.queue_draw()
 
-def create_action_buttons(service_list, filter_type):
+def create_action_buttons(service_lists):
     action_buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
     actions = ['start', 'stop', 'restart', 'enable', 'disable']
     for action in actions:
         btn = Gtk.Button(label=action.capitalize())
-        btn.connect("clicked", on_action_clicked, service_list, action, filter_type)
+        btn.connect("clicked", on_action_clicked, service_lists, action)
         action_buttons.pack_start(btn, True, True, 0)
     return action_buttons
 
@@ -53,6 +68,8 @@ def create_ui():
 
     notebook = Gtk.Notebook()
     win.add(notebook)
+
+    service_lists = {}  # Store each listbox keyed by its filter type
 
     for label, filter_type in [
         ("All Services", "all"),
@@ -73,8 +90,9 @@ def create_ui():
         box.pack_start(scrolled_window, True, True, 0)
 
         populate_services(service_list, filter_type)
+        service_lists[filter_type] = service_list
 
-        action_buttons = create_action_buttons(service_list, filter_type)
+        action_buttons = create_action_buttons(service_lists)
         box.pack_end(action_buttons, False, False, 0)
 
         notebook.append_page(box, Gtk.Label(label=label))

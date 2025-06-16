@@ -41,6 +41,17 @@ This project is designed to make managing systemd services more accessible, espe
 
 ## Installation
 
+### Arch Linux (or Arch-based distributions)
+
+You can install the Systemd Services Manager using the AUR (Arch User Repository).
+
+1. **Using an AUR Helper**:
+   If you have an AUR helper like `yay`, you can install it with:
+
+   ```bash
+   yay -S systemd-services-manager
+   ```
+
 ### From Source
 
 1. **Clone the Repository**:
@@ -64,21 +75,23 @@ This command will:
 - Compile the Python code.
 - Install the app to the correct locations on your system.
 
-
 3. **Run the Application**:
-	After installation, you can run the application using the command:
+   After installation, you can run the application using the command:
 
-	```bash
-	systemd-services-manager
-	```
+   ```bash
+   systemd-services-manager
+   ```
 
 ## Usage
 
 Once the application is installed, you can run it either from your desktop environment's application launcher or by typing `systemd-services-manager` in the terminal.
 
 ### Interface Overview:
+
 The main interface consists of:
+
 1. **Tabs**:
+
    - **All Services**: Shows all available systemd services.
    - **Running Services**: Shows only the services that are currently running.
    - **Enabled Services**: Shows the services that are enabled to start on boot.
@@ -96,13 +109,15 @@ You can perform actions on each service by selecting it and clicking the corresp
 ### Common Issues
 
 1. **Missing GTK3 or GObject dependencies**:
+
    - Make sure you have installed `python3-gtk` and `python-gobject`. You can install these on Arch-based systems via:
 
-     ```bash
-     sudo pacman -S python-gobject gtk3
-     ```
+      ```bash
+      sudo pacman -S python-gobject gtk3
+      ```
 
 2. **Permissions**:
+
    - Some actions, such as starting, stopping, enabling, or disabling services, may require administrative (root) permissions. The application will prompt you for your password if necessary.
 
 3. **Error with `systemctl`**:
@@ -119,20 +134,21 @@ If you want to contribute to this project, you can fork the repository, make cha
    ```bash
    git clone https://github.com/TiagoRibeiro25/systemd-services-manager.git
    cd systemd-services-manager
-   ````
+   ```
 
 2. **Install dependencies**:
-	You'll need Python and GTK3 to work on this project. You can install the dependencies with:
-	```bash
-	sudo pacman -S python-gobject gtk3
-	```
+   You'll need Python and GTK3 to work on this project. You can install the dependencies with:
+   ```bash
+   sudo pacman -S python-gobject gtk3
+   ```
 3. **Run the application**:
-After making changes, you can run the application from the src directory by using:
-	```bash
+   After making changes, you can run the application from the src directory by using:
+   `bash
 	python3 app.py
-	```
+	`
 4. **Submit a Pull Request**:
-	Once you've made your changes, create a pull request to contribute your code back to the project.
+   Once you've made your changes, create a pull request to contribute your code back to the project.
 
 ## License
+
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
